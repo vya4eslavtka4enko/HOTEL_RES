@@ -2,7 +2,7 @@ import pandas
 
 
 df = pandas.read_csv('hotels.csv',dtype={'id':str})
-
+df_card = pandas.read_csv('cards.csv', dtype= str).to_dict(orient='records')
 class Hotel:
     def __init__(self,hotel_id):
         self.hotel_id = hotel_id
@@ -34,15 +34,29 @@ class ReservationTicket:
         Hotel:{self.hotel.hotel_name}
         """
         return content
+class CreditCard():
+    def __init__(self,number):
+        self.number = number
+    def valid(self,expiration,holder,cvc):
+        card_data = {'number':self.number,'expiration':expiration,'holder':holder,'cvc':cvc}
+        if  card_data in df_card:
+            return True
+        else:
+            return False
+
 
 print(df)
 hotel_id = input("Enter the ID of the hotel ")
 hotel = Hotel(hotel_id)
 
 if hotel.available():
-    hotel.book()
-    name = input("Enter you name ")
-    reseration_ticket = ReservationTicket(name,hotel)
-    print(reseration_ticket.generate())
+    credit_card = CreditCard(number='1234')
+    if credit_card.valid(expiration='12/26',holder='JOHN SMITH',cvc='123'):
+        hotel.book()
+        name = input("Enter you name ")
+        reseration_ticket = ReservationTicket(name,hotel)
+        print(reseration_ticket.generate())
+    else:
+        print('There was a problem with payment')
 else:
     print('Hotel is not free ')
